@@ -44,6 +44,9 @@ const Button = styled.button`
 `;
 
 const CategoryItem = ({ item }) => {
+  {
+    console.log(item.cat);
+  }
   return (
     <Container>
       <Link to={`/products/${item.cat}`}>

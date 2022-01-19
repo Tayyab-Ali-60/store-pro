@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { mobile } from "../responsive";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router";
 
 const Container = styled.div`
   height: 60px;
@@ -70,6 +71,14 @@ const MenuItem = styled.div`
 
 const Navbar = () => {
   const quantity = useSelector(state=>state.cart.quantity)
+  const user = useSelector((state) => state.user.currentUser);
+  const history = useHistory();
+
+  const ClearUserStorage =()=> {
+    localStorage.clear();
+    window.location.reload();
+  }
+    
   return (
     <Container>
       <Wrapper>
@@ -81,11 +90,21 @@ const Navbar = () => {
           </SearchContainer>
         </Left>
         <Center>
-          <Logo>STORE</Logo>
+          <Logo onClick={()=>{history.push('/')}} style={{cursor:'pointer'}}>STORE</Logo>
         </Center>
         <Right>
-          <MenuItem>REGISTER</MenuItem>
-          <MenuItem>SIGN IN</MenuItem>
+          
+          {
+            user ? 
+            <MenuItem onClick={ ClearUserStorage }>SIGN OUT</MenuItem>
+            :
+            <Link to="/logout">
+              <MenuItem>REGISTER</MenuItem>
+              <MenuItem>SIGN IN</MenuItem>
+            </Link>
+          }
+          
+                    
           <Link to="/cart">
           <MenuItem>
             <Badge badgeContent={quantity} color="primary">

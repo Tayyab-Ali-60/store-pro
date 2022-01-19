@@ -19,20 +19,25 @@ const App = () => {
     <Router>
       <Switch>
         <Route exact path="/">
-          <Home />
+        {user ? <Home /> : <Login />}
+          
         </Route>
         <Route path="/products/:category">
-          <ProductList />
+        {user ? <ProductList /> : <Login />}
+          
         </Route>
         <Route path="/product/:id">
-          <Product />
+        {user ? <Product /> : <Login />}
+          
         </Route>
         <Route path="/cart">
-          <Cart />
+        {user ? <Cart /> : <Login />}
+          
         </Route>
         <Route path="/success">
-          <Success />
+        {user ? <Success /> : <Login />}
         </Route>
+
         <Route path="/login">{user ? <Redirect to="/" /> : <Login />}</Route>
         <Route path="/register">
           {user ? <Redirect to="/" /> : <Register />}

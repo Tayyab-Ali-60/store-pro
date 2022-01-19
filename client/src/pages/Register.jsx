@@ -1,5 +1,10 @@
 import styled from "styled-components";
 import { mobile } from "../responsive";
+import { useHistory } from "react-router";
+import { useState } from "react";
+import { publicRequest } from "../requestMethods";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../redux/apiCalls";
 
 const Container = styled.div`
   width: 100vw;
@@ -54,24 +59,78 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
+const Error = styled.span`
+  color: red;
+`;
+
+
 const Register = () => {
+  const history = useHistory(); 
+  const [username, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(false);
+  const dispatch = useDispatch();
+
+  // Handling the name change
+  const handleName = (e) => {
+    setName(e.target.value);
+    setSubmitted(false);
+  };
+ 
+  // Handling the email change
+  const handleEmail = (e) => {
+    setEmail(e.target.value);
+    setSubmitted(false);
+  };
+ 
+  // Handling the password change
+  const handlePassword = (e) => {
+    setPassword(e.target.value);
+    setSubmitted(false);
+  };
+  // Handling the form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (username === '' || email === '' || password === '') {
+      setError(true);
+    } else {
+      try {
+        const res = await publicRequest.post("/auth/register", { username, email, password });
+        console.log(res);
+        setSubmitted(true);
+        login(dispatch, { username, password });
+        
+      } catch (err) {
+        console.log(err);
+      }
+      setError(false);
+    }
+  };
+
+ 
+  
   return (
     <Container>
       <Wrapper>
         <Title>CREATE AN ACCOUNT</Title>
         <Form>
-          <Input placeholder="name" />
-          <Input placeholder="last name" />
-          <Input placeholder="username" />
-          <Input placeholder="email" />
-          <Input placeholder="password" />
-          <Input placeholder="confirm password" />
+          <Input onChange={handleName} value={username} placeholder="username" />
+          <Input onChange={handleEmail} value={email} placeholder="email" />
+          <Input  onChange={handlePassword} value={password} placeholder="password" />
           <Agreement>
             By creating an account, I consent to the processing of my personal
             data in accordance with the <b>PRIVACY POLICY</b>
           </Agreement>
-          <Button>CREATE</Button>
+          <Button onClick={handleSubmit}  type="submit">CREATE</Button>
+          <Button onClick={()=>{history.push('/login')}} style={{cursor:'pointer', marginLeft:'135px'}} >LOGIN</Button>
         </Form>
+        {/* Calling to the methods */}
+        <div className="messages">
+          {error && <Error>Something went wrong...</Error>}
+        </div>
       </Wrapper>
     </Container>
   );
